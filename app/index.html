@@ -10,6 +10,7 @@
 
   <link href="//www.google-analytics.com" rel="dns-prefetch">
   <link href="//ajax.googleapis.com" rel="dns-prefetch">
+  <link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.7/mapbox.css' rel='stylesheet' />
   <link href="assets/css/style.min.css" rel="stylesheet">
 
   <script src="//use.typekit.net/slx5bcx.js"></script>
@@ -30,8 +31,9 @@
       </div>
     </header>
 
-    <div id="maps-loading"></div>
-    <div id="maps-canvas"></div>
+    <div id="map"></div>
+    <!-- <div id="maps-loading"></div>
+    <div id="maps-canvas"></div> -->
 
     <main class="main" role="main">
       <h1>MAP</h1>
@@ -44,7 +46,7 @@
   <script src="assets/components/jquery/jquery.min.js"></script>
   <script src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
 	<script src="http://backbonejs.org/backbone-min.js"></script>
-	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBzL03_yoSDV_uVlpkoiF5Us1k0u2fFdd0&sensor=true"></script>
+  <script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.7/mapbox.js'></script>
   <script src="assets/js/scripts.min.js"></script>
 
   <script>

@@ -6,9 +6,9 @@
  * @version 1.0.3
  * Copyright 2015. MIT licensed.
  */
+
 var TWF = TWF || {};
 var API_URL = 'http://twf-api-production.elasticbeanstalk.com';
-
 
 // Fake DB
 TWF.DataStore = function(){
@@ -59,233 +59,62 @@ TWF.DataStore = function(){
 TWF.bookstore = new TWF.DataStore();
 
 ;(function ($, window, undefined) {
-  'use strict';
+	'use strict';
 
-  var $doc = $(document),
-      Modernizr = window.Modernizr;
+	var $doc = $(document),
+	Modernizr = window.Modernizr;
 
-  // Hide address bar on mobile devices
-  if (Modernizr.touch) {
-    $(window).load(function () {
-      setTimeout(function () {
-        window.scrollTo(0, 1);
-      }, 0);
-    });
-  }
+	// Hide address bar on mobile devices
+	if (Modernizr.touch) {
+		$(window).load(function () {
+			setTimeout(function () {
+				window.scrollTo(0, 1);
+			}, 0);
+		});
+	}
 
-	//get these maps poppin'
-	var poly;
-	var tmppoly;
-	var map;
-	var location;
-	var initialLocation;
-	var geodesic;
-	var geocoder 			= new google.maps.Geocoder();
+	L.mapbox.accessToken = 'pk.eyJ1IjoidHJldm9ybWNuYXVnaHRvbiIsImEiOiJjZVhXMEFzIn0.uTplA3NuxCGuKuOfW-LHHQ';
+
 	var submitLoc 			= $('#set-location');
 	var submitGeoLoc		= $('.geo-location');
-	var chicago 			= new google.maps.LatLng(41.852, -87.681);
 	var browserSupportFlag 	= new Boolean();
 	var error				= new Boolean();
-
 	var totalDistance = 0;
+
+	var map = L.mapbox.map('map', 'trevormcnaughton.ln3fn8e9').setView([41.852, -87.681], 10);
 
 	// Kind of a model
 	var tracker = {
 		init: function(){
-			//Map Options
-
-			//Give this map some style
-			var styles = [
-				{
-					stylers: [
-						{ saturation: -100 }
-					]
-				},{
-					featureType: "road",
-					elementType: "geometry",
-					stylers: [
-						{ lightness: 150 },
-						{ visibility: "simplified" }
-					]
-				},{
-					featureType: "road",
-					elementType: "labels",
-					stylers: [
-						{ visibility: "off" }
-					]
-				}
-			];
-
-			//initiate styled map and giver 'er a name
-			var styledMap = new google.maps.StyledMapType(styles, {name: "Styled Map"});
-
-			var mapOpt 	=	{
-				zoom:	12,
-				center:	chicago,
-				//mapTypeId: google.maps.MapTypeId.ROADMAP,
-				disableDefaultUI: true,
-				zoomControl: true,
-			    zoomControlOptions: {
-			        style: google.maps.ZoomControlStyle.LARGE,
-			        position: google.maps.ControlPosition.LEFT_CENTER
-			    },
-				mapTypeControlOptions: {
-					mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
-				}
-			};
-
-			map = new google.maps.Map(document.getElementById("maps-canvas"), mapOpt);
-			map.mapTypes.set('map_style', styledMap);
-			map.setMapTypeId('map_style');
-
-
-			var polyOptions = {
-				strokeColor:	TWF.bookstore.getCurrentColor(),
-				strokeOpacity:	0.75,
-				strokeWeight:	3
+			var polylineOptions = {
+				color: TWF.bookstore.getCurrentColor()
 			}
-
-			//setup polyline
-			poly = new google.maps.Polyline(polyOptions, {geodesic: true});
-			poly.setMap(map);
 
 			TWF.bootstrap = new TWF.Bootstrap();
 		},
-		setLocationAndDraw: function(){
 
+		setLocationAndDraw: function(){
 			var color = TWF.bookstore.tracker.currentBook.color;
 
-			// Update line color
-			poly.setOptions({strokeColor:color});
+			location 		= TWF.bookstore.tracker.enteredLocation;
 
-
-			var path 		= poly.getPath();
-			var pathPoints	= (path.length) + 1;
-			location 		= TWF.bookstore.tracker.enteredLocation;//$('#location').val();
-
-			var customBookMarker = new TWF.BookMarker({fillColor:color,strokeColor:color});
-			//Call the geocode method
-			geocoder.geocode({'address': location}, function(results, status){
-
-				if (status == google.maps.GeocoderStatus.OK){
-					path.push(results[0].geometry.location);
-					getDistance();
-					map.setCenter(results[0].geometry.location); //if geocode status is OK set centerpoint to the variables location
-
-					//after center, sets marker at location
-					var marker = new google.maps.Marker({
-
-						map:map,
-						position: results[0].geometry.location,
-						animation: google.maps.Animation.DROP,
-						icon: customBookMarker.ui,
-						zoom: 16
-
-					});
-
-					google.maps.event.addListener(marker, 'click', function(){
-						TWF.infoWindow.infowindow.open(map,marker);
-					})
-
-/* 					submitLoc.trigger('reveal:close'); */
-
-				//throw an error into the HTML
-				}else{
-					$('.geocode-error-message').html('We cannot find where you are, try to be more specific.').addClass('show-error');
-				}
-			});
-			//Clears inputs
 			setTimeout(function(){
 				$('#book-id, #location').val('');
 			},280 );
 
 			$('.total-points').html(pathPoints);
 
-		},
-
-		setGeolocation: function(){
-
-			//Check for Geolocation then use W3C Geolocation (preffered)
-			if(navigator.geolocation) {
-				browserSupportFlag = true;
-
-				navigator.geolocation.getCurrentPosition(function(position) {
-					initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
-					map.setCenter(initialLocation);
-
-					var marker = new google.maps.Marker({
-						position:	initialLocation,
-						map:		map
-					});
-
-				}, function() {
-				  handleNoGeolocation(browserSupportFlag);
-				});
-			} else {
-				browserSupportFlag = false;
-				handleNoGeolocation(browserSupportFlag)
-			}
-
-			function handleNoGeolocation(errorFlag) {
-			    if (errorFlag == true) {
-			      $('.geocode-error-message').html('Oh no! Geolocation service has failed. Try typing in your location.').addClass('show-error');
-			    } else {
-			      $('.geocode-error-message').html("Your browser doesn't support geolocation").addClass('show-error');
-			    }
-			    map.setCenter(initialLocation);
-			  }
-
-			  map.setZoom(16)
-			  $(this).trigger('reveal:close');
-
 		}
-
 	}; //end tracker
-
-
-
-
-
-	//Calculate Distance
-	function getDistance(){
-		var path = poly.getPath();
-		var len = path.length;
-		var newPoint;
-		var lastPoint;
-
-		if( len > 1 ){
-			newPoint = path.getAt(len-1);
-			lastPoint = path.getAt(len-2);
-			updateDistance(google.maps.geometry.spherical.computeDistanceBetween(newPoint,lastPoint));
-		}
-	}
-
-
-
-
-
-	//Update total distance
-	function updateDistance(dist){
-		dist = Math.round(dist*0.00062);
-		totalDistance += dist;
-
-		$('.last-dist').html(dist + ' mi');
-		$('.total-dist').html(totalDistance + ' mi');
-
-	}
-
-
-
 
 	// Book Marker Objects
 	TWF.BookMarker = function(opts){
 		this.config = {
-			path: google.maps.SymbolPath.CIRCLE,
 			fillColor: '#36abc4',
 			fillOpacity: 1,
-			scale: 8,
+			scale: 10,
 			strokeColor: '#36abc4',
-			strokeWeight: 8,
+			strokeWeight: 10,
 			strokeOpacity:0.3
 		}
 
@@ -293,10 +122,6 @@ TWF.bookstore = new TWF.DataStore();
 
 		this.ui = this.config;
 	};
-
-
-
-
 
 	// Form Actions
 	TWF.Gateway = function(){
@@ -349,7 +174,6 @@ TWF.bookstore = new TWF.DataStore();
 								// if you want
 							},
 							success: function(data){
-								//$('p#status').html('Success');
 								me.form.trigger('reveal:close');
 								var pathToAddTo = TWF.Paths.getById(TWF.bookstore.tracker.currentBook.id).group;
 								pathToAddTo.addPoint(TWF.bookstore.tracker.geocodedLocation);
@@ -358,35 +182,7 @@ TWF.bookstore = new TWF.DataStore();
 								//adderror
 								alert('There was a problem saving your point. Please try again later');
 							}
-							});
-
-
-						/*
-$.ajax({
-							url:"http://ec2-50-17-138-70.compute-1.amazonaws.com/api",
-							data: data,
-							success: function(da){
-								// Point has been saved
-								me.form.trigger('reveal:close');
-
-								var pathToAddTo = TWF.Paths.getById(TWF.bookstore.tracker.currentBook.id).group;
-
-								pathToAddTo.addPoint(TWF.bookstore.tracker.geocodedLocation);
-							},
-							error: function(){
-								console.log("Leslie kNOPE");
-							}
 						});
-*/
-
-
-						//While ajax loads
-/*
-						$(".loading").ajaxStart(function(){
-						   $(this).show();
-						   console.log('loading')
-						 });
-*/
 
 					}else{
 						$('.errors').html('We cannot find where you are, try to be more specific.');
@@ -410,34 +206,11 @@ $.ajax({
 		}
 	}
 
-	TWF.DEV = function(){
-		this.buildFakePoints = function(cities,color,pol){
-			for( var i = 0; i < cities.length; i++ ){
-				var path = pol.getPath();
-				pol.setOptions({strokeColor:color});
-				path.push(cities[i]);
-				var marker = new google.maps.Marker({
-					map:map,
-					position: cities[i],
-					animation: google.maps.Animation.DROP,
-					icon: new TWF.BookMarker({fillColor:color, strokeColor:color}).ui,
-					zoom: 16
-				});
-			}
-		}
-	};
-
-
-
 	// Load tracker
 	$(window).load(function(){
-			TWF.TEMP = new TWF.DEV();
 		tracker.init();
 		var gateway = new TWF.Gateway();
 	});
-
-
-
 
 	TWF.PointModel = Backbone.Model.extend({
 		defaults:{
@@ -468,62 +241,19 @@ $.ajax({
 	}
 
 	TWF.PathGroup = function(books){
-		this.polyOptions = {
-			strokeColor:	TWF.bookstore.getBookById(books.id).color,
-			strokeOpacity:	0.75,
-			strokeWeight:	3	
-		};
-		this.books = books;
-		this.id = books.id;
-		this.poly = new google.maps.Polyline(this.polyOptions, {geodesic: true});
-		this.poly.setMap(map);
-		var color = this.polyOptions.strokeColor;
-		this.color = color;
 		var i = 0;
 		var len = books.collection.length;
-		var pts = [];
 
-		for(i; i<len; i++){
-			var path = this.poly.getPath();
-			this.poly.setOptions({strokeColor:color});
-			var point = new google.maps.LatLng(books.collection[i].get("lat"), books.collection[i].get("lon"));
-			path.push(point);
-			var marker = new google.maps.Marker({
-					map:map,
-					position: point,
-					//animation: google.maps.Animation.DROP,
-					icon: new TWF.BookMarker({fillColor:color, strokeColor:color}).ui,
-					zoom: 16
-			});
-
-
+		for (i; i<len; i++) {
+			var marker = L.marker([books.collection[i].get('lat'), books.collection[i].get('lon')]);
 		}
+
+		marker.addTo(map);
 	};
-
-	TWF.PathGroup.prototype = {
-		addPoint: function(newpoint){
-			this.books.collection.push(newpoint);
-			this.poly.getPath().push(newpoint);
-			var me = this;
-			var marker = new google.maps.Marker({
-					map:map,
-					position: newpoint,
-					animation: google.maps.Animation.DROP,
-					icon: new TWF.BookMarker({fillColor:me.color, strokeColor:me.color}).ui,
-					zoom: 16
-			});
-			map.setCenter(newpoint);
-			map.setZoom(8)
-		}
-	}
-
-
-
 
 	TWF.Bootstrap = function(){
 
 		var me = this;
-
 		// Fetch points
 		$.ajax({
 			url: API_URL + '/api/all',
@@ -533,7 +263,7 @@ $.ajax({
 				me.batchPoints();
 			},
 			error: function(){
-				alert("Can't access the points at this time. Come back later!");
+				// alert("Can't access the points at this time. Come back later!");
 			}
 		});
 
@@ -556,7 +286,6 @@ $.ajax({
 				{collection:[]},
 				{collection:[]}
 			];
-
 
 			_.each(coll.models, function(model,idx){
 				var bid = model.get("book_id");
@@ -602,7 +331,6 @@ $.ajax({
 					id: TWF.books[i].id
 				});
 			}
-
 		}
 	}
 })(jQuery, this);

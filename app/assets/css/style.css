@@ -367,7 +367,7 @@ td, th {
   text-decoration: none;
   color: #FFF; }
 
-#maps-canvas {
+#map {
   height: 100%; }
 
 ::-moz-selection {
