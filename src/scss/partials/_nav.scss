@@ -1,0 +1,18 @@
+// Main Navigation
+
+.main-nav__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.main-nav__item {
+  display: inline-block;
+  margin: 0 0 0 1em;
+}
+
+.main-nav__link {
+  padding: 1.5em 0;
+  text-decoration: none;
+  color: #FFF;
+}

@@ -1,0 +1,15 @@
+* {
+  box-sizing: border-box;
+  font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font: 16px/1.875 $default-font-family;
+  color: #444;
+}
+
+body,html {
+	height: 100%;
+	overflow: hidden;
+}
