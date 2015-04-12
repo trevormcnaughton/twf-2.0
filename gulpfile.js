@@ -7,8 +7,8 @@ var gulp = require('gulp'),
     header  = require('gulp-header'),
     rename = require('gulp-rename'),
     minifyCSS = require('gulp-minify-css'),
-    package = require('./package.json');
-
+    package = require('./package.json'),
+    concat = require('gulp-concat');
 
 var banner = [
   '/*!\n' +
@@ -30,21 +30,26 @@ gulp.task('css', function () {
     .pipe(minifyCSS())
     .pipe(rename({ suffix: '.min' }))
     .pipe(header(banner, { package : package }))
-    .pipe(gulp.dest('app/assets/css'))
-    .pipe(browserSync.reload({stream:true}));
+    .pipe(gulp.dest('app/assets/css'));
+    // .pipe(browserSync.reload({stream:true}));
 });
 
 gulp.task('js',function(){
-  gulp.src('src/js/scripts.js')
-    .pipe(jshint('.jshintrc'))
+  var files = [
+    'src/js/views/add-book.js',
+    'src/js/scripts.js'
+  ];
+  gulp.src(files)
+    // .pipe(jshint('.jshintrc'))
     .pipe(jshint.reporter('default'))
-    .pipe(header(banner, { package : package }))
+    // .pipe(header(banner, { package : package }))
+    .pipe(concat('scripts.js'))
     .pipe(gulp.dest('app/assets/js'))
     //.pipe(uglify())
-    .pipe(header(banner, { package : package }))
+    // .pipe(header(banner, { package : package }))
     .pipe(rename({ suffix: '.min' }))
-    .pipe(gulp.dest('app/assets/js'))
-    .pipe(browserSync.reload({stream:true, once: true}));
+    .pipe(gulp.dest('app/assets/js'));
+    // .pipe(browserSync.reload({stream:true, once: true}));
 });
 
 gulp.task('browser-sync', function() {
@@ -60,6 +65,6 @@ gulp.task('bs-reload', function () {
 
 gulp.task('default', ['css', 'js', 'browser-sync'], function () {
     gulp.watch("src/scss/*/*.scss", ['css']);
-    gulp.watch("src/js/*.js", ['js']);
+    gulp.watch("src/js/**/*.js", ['js']);
     gulp.watch("app/*.html", ['bs-reload']);
 });
