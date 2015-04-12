@@ -69,10 +69,7 @@
 })();
 
 var TWF = TWF || {};
-var API_URL = 'http://twf-api-production.elasticbeanstalk.com';
-
 var fb = new Firebase("https://to-wake-from.firebaseio.com/books");
-
 
 // Fake DB
 TWF.DataStore = function(){
@@ -373,6 +370,8 @@ TWF.bookstore = new TWF.DataStore();
 
       geocoder.geocode({'address': rawData.address}, function(results, status){
         if(status == google.maps.GeocoderStatus.OK){
+          TWF.bookstore.tracker.geocodedLocation = results[0].geometry.location;
+
           fb.push({
             id: _.uniqueId() + new Date().getTime(),
             book_id: TWF.bookstore.tracker.currentBook.id,
@@ -380,6 +379,9 @@ TWF.bookstore = new TWF.DataStore();
             lon: results[0].geometry.location.D,
             date: new Date().getTime()
           });
+
+          var pathToAddTo = TWF.Paths.getById(TWF.bookstore.tracker.currentBook.id).group;
+          pathToAddTo.addPoint(TWF.bookstore.tracker.geocodedLocation);
         }else{
           console.log('We cannot find where you are, try to be more specific.');
         }
