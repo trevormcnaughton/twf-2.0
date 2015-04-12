@@ -23,7 +23,7 @@ var banner = [
 ].join('');
 
 gulp.task('css', function () {
-    return gulp.src('src/scss/style.scss')
+    return gulp.src('src/scss/*.scss')
     .pipe(sass({errLogToConsole: true}))
     .pipe(autoprefixer('last 4 version'))
     .pipe(gulp.dest('app/assets/css'))
@@ -37,6 +37,7 @@ gulp.task('css', function () {
 gulp.task('js',function(){
   var files = [
     'src/js/views/add-book.js',
+    'src/js/views/about.js',
     'src/js/scripts.js'
   ];
   gulp.src(files)

@@ -3,11 +3,13 @@
   var view = document.querySelector('#add-book-view');
   var logTrigger = document.querySelector('[data-name="form-trigger"]');
   var form = view.querySelector('form');
+  var close = document.getElementById('close');
 
   function attachEvents() {
     logTrigger.addEventListener('click', showForm);
     document.body.addEventListener('keyup', handleDocumentKeyup);
     form.addEventListener('submit', handleFormSubmit);
+    close.addEventListener('click', hideForm);
   }
 
   function showForm() {

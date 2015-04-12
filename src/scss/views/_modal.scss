@@ -1,0 +1,42 @@
+.modal-view__wrapper {
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  background-color: rgba(20, 20, 20, 0.6);
+
+  form {
+    margin: 0;
+  }
+}
+
+.show-form,
+.show-about {
+  display: block;
+}
+
+.modal-view__content {
+  max-width: 580px;
+  overflow: auto;
+  margin: 2em auto 2em;
+  padding: 2em;
+  background: #FFF;
+  border-radius: 3px;
+}
+
+#about-view {
+  height: 100%;
+  overflow: scroll;
+
+  .modal-view__content {
+    max-width: 640px;
+  }
+}
+
+#cancel.button {
+  margin-top: 1em;
+  color: lighten($color-grey-dark, 50%);
+}

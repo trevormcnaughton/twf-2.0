@@ -39,9 +39,12 @@
 @import 'modules/print';
 
 //----------------------------------*\
+// VIEWS
+//----------------------------------*/
+@import 'views/modal';
+
+//----------------------------------*\
 // VENDOR
 //----------------------------------*/
 
-@import 'vendor/external';
-
-@import 'views/add-book';
+@import 'vendor/skeleton';

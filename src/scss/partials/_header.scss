@@ -7,6 +7,10 @@
   padding: 1.5em;
   color: #FFF;
   background: $color-grey-dark;
+
+  @media (max-width: 550px) {
+    text-align: center;
+  }
 }
 
 .logo {

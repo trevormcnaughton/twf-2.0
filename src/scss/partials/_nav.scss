@@ -4,15 +4,26 @@
   margin: 0;
   padding: 0;
   list-style: none;
+  @media (max-width: 550px) {
+    text-align: center;
+  }
 }
 
 .main-nav__item {
   display: inline-block;
   margin: 0 0 0 1em;
+
+  &:first-child {
+    margin: 0;
+  }
 }
 
 .main-nav__link {
   padding: 1.5em 0;
   text-decoration: none;
   color: #FFF;
+
+  &:hover {
+    background: $color-green;
+  }
 }

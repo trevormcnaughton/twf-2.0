@@ -23,10 +23,12 @@
       <nav class="main-nav six columns u-text-right">
       <ul class="main-nav__list">
         <li class="main-nav__item">
-          <a class="main-nav__link" href="#" data-name="form-trigger">Log</a>
+          <a class="main-nav__link" href="#" data-name="form-trigger">Add Book</a>
         </li>
-        <li class="main-nav__item"><a class="main-nav__link" href="#">About</a></li>
-        <li class="main-nav__item"><a class="main-nav__link" href="#">Request</a></li>
+        <li class="main-nav__item"><a class="main-nav__link" href="mailto:requests@towakefrom.com?subject=To Wake From Book Request&body=I would like to recieve a copy of the book.">Request Book</a></li>
+        <li class="main-nav__item">
+          <a class="main-nav__link" href="#" data-name="about-trigger">About</a>
+        </li>
       </ul>
       </nav>
     </div>
@@ -43,26 +45,61 @@
       <h1>FOOTER</h1>
     </footer>
 
-    <div id="add-book-view">
-      <form action="#">
-        <label for="book-id">Book Id</label>
-        <select name="book-id" id="book-id">
-          <option value="twf-001">twf-001</option>
-          <option value="twf-002">twf-002</option>
-          <option value="twf-003">twf-003</option>
-          <option value="twf-004">twf-004</option>
-          <option value="twf-005">twf-005</option>
-          <option value="twf-006">twf-006</option>
-          <option value="twf-007">twf-007</option>
-          <option value="twf-008">twf-008</option>
-          <option value="twf-009">twf-009</option>
-          <option value="twf-010">twf-010</option>
-        </select>
+    <div id="add-book-view" class="modal-view__wrapper">
+      <div class="modal-view__content">
+        <h3 class="modal-title u-text-center">Add Your Book</h3>
+        <p class="description-text">Your book ID is located in the top left corner of the ledger. Enter your book ID then add your address (or at least the city) to log your book.</p>
+        <form action="#">
+          <label for="book-id">Book Id</label>
+          <select name="book-id" id="book-id" class="select">
+            <option value="twf-001">twf-001</option>
+            <option value="twf-002">twf-002</option>
+            <option value="twf-003">twf-003</option>
+            <option value="twf-004">twf-004</option>
+            <option value="twf-005">twf-005</option>
+            <option value="twf-006">twf-006</option>
+            <option value="twf-007">twf-007</option>
+            <option value="twf-008">twf-008</option>
+            <option value="twf-009">twf-009</option>
+            <option value="twf-010">twf-010</option>
+          </select>
 
-        <label for="address">Full Address</label>
-        <input id="address" type="text" name="address" placeholder="ex. 123 Damen Ave Chicago IL">
-        <button id="submit">Submit</button>
-      </form>
+          <label for="address">Full Address</label>
+          <input id="address" class="input" type="text" name="address" placeholder="ex. 123 Damen Ave Chicago IL">
+          <button id="submit" class="button button__green">Add Book</button>
+          <hr>
+          <button id="close" class="button button--text u-text-center">Cancel</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="about-view" class="modal-view__wrapper">
+      <div class="modal-view__content">
+        <h3 class="modal-title u-text-center">To: WAKE From:</h3>
+
+        <p>To: WAKE From: is a collaborative project by Matt Austin and Trevor McNaughton. On October 27, 2012, Matt Austin held a dinner at The Perch in the Pilsen neighborhood of Chicago. 10 copies of his publication WAKE were distributed to ten people of varying relationships to Matt (his brother, his first philosophy professor, his boss, college mentors, etc.), few of which knew each other. Each recipient accepted the responsibility to read the book, sign the included ledger, and log their reading location into this website; they then are expected to pass the publication on to the next person that they think should read it as that person accepts the same responsibilities.</p>
+
+        <p>This website displays the origin of the books and the journey that each book has taken up to this point, noting each connection from one chosen reader to another.</p>
+
+        <img src="/assets/img/wake-book-01.jpg" alt="To: Wake From: Book">
+
+
+        <h4>About WAKE</h4>
+
+        <p>WAKE is a photographic and literary narrative that presents the account of several tragic moments regarding Matt's family over the past 4 years. The story begins with e-mails between him and his dad, exchanged over the days that followed a violent eviction from his dad's apartment and Matt's simultaneous arrival in Ireland to study abroad. In the following chapters, WAKE gives an account of three family deaths over a short few months, drawing comparisons between economic failure and physical mortality. While providing one of many stories of a family's experience with economic devastation, the book poses an optimistic perspective of learned appreciation through difficulty.</p>
+
+        <p>The publication exists as a handmade clamshell box comprising four hard-cover books that divide the story into four chapters: Twenty-Two, Autumn Mums, White Blankets, and "Somewhere." Each publication comes with an attached booklet that holds a letter from Matt to the recipient, instructions on how to participate, and a ledger for each reader to sign and date.</p>
+
+        <i>This project was partially supported by the Illinois Arts Council, a state agency.</i>
+        <hr>
+        <a href="http://www.mattislearning.com/">MATT AUSTIN</a>
+        <br>
+        <a href="http://trvr.co">TREVOR MCNAUGHTON</a>
+
+        <hr>
+
+        <button id="close" class="button button--text u-text-center">Close</button>
+      </div>
     </div>
 
     <script src="assets/components/jquery/jquery.min.js"></script>
