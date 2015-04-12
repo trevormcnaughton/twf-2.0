@@ -1,5 +1,31 @@
 # To Wake From
+==============
+
 Version 2.0 of To Wake From
+
+## Install
+
+If using `nvm`:
+
+```
+nvm install && nvm use
+```
+
+Install dependencies:
+
+```
+npm i
+```
+
+## Development
+
+Run server and watch tasks:
+
+```
+npm start
+```
+
+## Background
 
 _[To: WAKE From:](http://towakefrom.com)_ is a collaborative project by Matt Austin and Trevor McNaughton. On October 27, 2012, Matt Austin held a dinner at The Perch in the Pilsen neighborhood of Chicago. 10 copies of his publication WAKE were distributed to ten people of varying relationships to Matt (his brother, his first philosophy professor, his boss, college mentors, etc.), few of which knew each other. Each recipient accepted the responsibility to read the book, sign the included ledger, and log their reading location into this website; they then are expected to pass the publication on to the next person that they think should read it as that person accepts the same responsibilities.
 

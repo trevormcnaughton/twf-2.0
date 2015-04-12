@@ -5,6 +5,9 @@
   "url": "https://HosseinKarami.github.io/fastshell",
   "version": "1.0.3",
   "license": "MIT",
+  "scripts": {
+    "start": "gulp"
+  },
   "repository": {
     "type": "git",
     "url": "http://github.com/HosseinKarami/fastshell.git"
