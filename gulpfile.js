@@ -36,6 +36,9 @@ gulp.task('css', function () {
 
 gulp.task('js',function(){
   var files = [
+    'src/js/vendor/jquery.min.js',
+    'src/js/vendor/underscore.js',
+    'src/js/vendor/backbone.js',
     'src/js/views/add-book.js',
     'src/js/views/about.js',
     'src/js/scripts.js'
@@ -46,7 +49,7 @@ gulp.task('js',function(){
     // .pipe(header(banner, { package : package }))
     .pipe(concat('scripts.js'))
     .pipe(gulp.dest('app/assets/js'))
-    //.pipe(uglify())
+    .pipe(uglify())
     // .pipe(header(banner, { package : package }))
     .pipe(rename({ suffix: '.min' }))
     .pipe(gulp.dest('app/assets/js'));
