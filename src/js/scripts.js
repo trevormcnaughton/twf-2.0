@@ -310,8 +310,10 @@ TWF.bookstore = new TWF.DataStore();
             date: new Date().getTime()
           });
 
-          var pathToAddTo = TWF.Paths.getById(TWF.bookstore.tracker.currentBook.id).group;
-          pathToAddTo.addPoint(TWF.bookstore.tracker.geocodedLocation);
+          requestAnimationFrame(function () {
+            map.setCenter(TWF.bookstore.tracker.geocodedLocation);
+            map.setZoom(8);
+          });
         }else{
           console.log('We cannot find where you are, try to be more specific.');
         }
@@ -382,26 +384,6 @@ TWF.bookstore = new TWF.DataStore();
 
 		}
 	};
-
-	TWF.PathGroup.prototype = {
-		addPoint: function(newpoint){
-			this.books.collection.push(newpoint);
-			this.poly.getPath().push(newpoint);
-			var me = this;
-			var marker = new google.maps.Marker({
-					map:map,
-					position: newpoint,
-					animation: google.maps.Animation.DROP,
-					icon: new TWF.BookMarker({fillColor:me.color, strokeColor:me.color}).ui,
-					zoom: 16
-			});
-			map.setCenter(newpoint);
-			map.setZoom(8)
-		}
-	}
-
-
-
 
 	TWF.Bootstrap = function(){
 		var me = this;
