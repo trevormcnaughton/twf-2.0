@@ -1,6 +1,8 @@
 var TWF = TWF || {};
 var API_URL = 'http://twf-api-production.elasticbeanstalk.com';
 
+var fb = new Firebase("https://to-wake-from.firebaseio.com/books");
+
 
 // Fake DB
 TWF.DataStore = function(){
@@ -36,7 +38,7 @@ TWF.DataStore = function(){
 		var bs = this.books;
 		var len = bs.length;
 
-		for(i=0; i<len; i++){
+		for(i = 0; i < len; i++){
 			if(bs[i].id === id) return bs[i];
 		}
 
@@ -288,144 +290,31 @@ TWF.bookstore = new TWF.DataStore();
 
 
 
-
-
-	// Form Actions
-	TWF.Gateway = function(){
-		this.formstate = 0; // Current state of form
-		this.form = $('.form');
-		this.input = $('#book-id');
-
-		this.init();
-	}
-
-	TWF.Gateway.prototype = {
-		init: function(){
-			$('#set-book-id').on('click', $.proxy(this.formSubmit,this));
-			this.form.on('submit', $.proxy(this.formSubmit,this));
-		},
-		formSubmit: function(){
-
-			var me = this;
-
-			// Handle book id lookup
-			if( me.formstate === 0 ){
-				var val = me.input.val().toLowerCase();
-				var bookToLookup = TWF.bookstore.getBookById(val);
-				if(bookToLookup !== null){
-					TWF.bookstore.tracker.currentBook = bookToLookup;
-					me.updateFormState();
-				}else{
-					$('.errors').html("Incorrect ID");
-				}
-			}else{
-				// Handle location search
-				TWF.bookstore.tracker.enteredLocation = me.input.val();
-
-				geocoder.geocode({'address': TWF.bookstore.tracker.enteredLocation}, function(results, status){
-					if(status == google.maps.GeocoderStatus.OK){
-						TWF.bookstore.tracker.geocodedLocation = results[0].geometry.location;
-
-						// Do an ajax save
-						var data = {
-							book_id: TWF.bookstore.tracker.currentBook.id,
-							lat: results[0].geometry.location.Ya,
-							lon: results[0].geometry.location.Za
-						}
-
-						$.ajax({
-							type:'POST',
-							url: API_URL + '/api/add',
-							data: data,
-							beforeSend: function(){
-								// if you want
-							},
-							success: function(data){
-								//$('p#status').html('Success');
-								me.form.trigger('reveal:close');
-								var pathToAddTo = TWF.Paths.getById(TWF.bookstore.tracker.currentBook.id).group;
-								pathToAddTo.addPoint(TWF.bookstore.tracker.geocodedLocation);
-							},
-							error: function(err){
-								//adderror
-								alert('There was a problem saving your point. Please try again later');
-							}
-							});
-
-
-						/*
-$.ajax({
-							url:"http://ec2-50-17-138-70.compute-1.amazonaws.com/api",
-							data: data,
-							success: function(da){
-								// Point has been saved
-								me.form.trigger('reveal:close');
-
-								var pathToAddTo = TWF.Paths.getById(TWF.bookstore.tracker.currentBook.id).group;
-
-								pathToAddTo.addPoint(TWF.bookstore.tracker.geocodedLocation);
-							},
-							error: function(){
-								console.log("Leslie kNOPE");
-							}
-						});
-*/
-
-
-						//While ajax loads
-/*
-						$(".loading").ajaxStart(function(){
-						   $(this).show();
-						   console.log('loading')
-						 });
-*/
-
-					}else{
-						$('.errors').html('We cannot find where you are, try to be more specific.');
-					}
-				});
-
-			}
-			return false;
-		},
-		updateFormState: function(){
-			this.formstate = this.formstate === 0 ? 1 : 0;
-
-			if(this.formstate === 1){
-				// Change to location input
-				this.input.attr('placeholder','address ex. 123 Damen Ave Chicago IL');
-				this.input.val('');
-				$('#modal-title').html('Enter your full address');
-				$('.helpful-tip').html('Enter your address, be as specific as possible');
-				$('.errors').html('');
-			}
-		}
-	}
-
-	TWF.DEV = function(){
-		this.buildFakePoints = function(cities,color,pol){
-			for( var i = 0; i < cities.length; i++ ){
-				var path = pol.getPath();
-				pol.setOptions({strokeColor:color});
-				path.push(cities[i]);
-				var marker = new google.maps.Marker({
-					map:map,
-					position: cities[i],
-					animation: google.maps.Animation.DROP,
-					icon: new TWF.BookMarker({fillColor:color, strokeColor:color}).ui,
-					zoom: 16
-				});
-			}
-		}
-	};
-
-
-
 	// Load tracker
 	$(window).load(function(){
-			TWF.TEMP = new TWF.DEV();
 		tracker.init();
-		var gateway = new TWF.Gateway();
+
+    Backbone.on('book:add', function (rawData) {
+      var bookId = rawData.bookId;
+
+      TWF.bookstore.tracker.currentBook = TWF.bookstore.getBookById(bookId)
+      TWF.bookstore.tracker.currentBook.id = bookId;
+      TWF.bookstore.tracker.enteredLocation = rawData.address;
+
+      geocoder.geocode({'address': rawData.address}, function(results, status){
+        if(status == google.maps.GeocoderStatus.OK){
+          fb.push({
+            id: _.uniqueId() + new Date().getTime(),
+            book_id: TWF.bookstore.tracker.currentBook.id,
+            lat: results[0].geometry.location.k,
+            lon: results[0].geometry.location.D,
+            date: new Date().getTime()
+          });
+        }else{
+          console.log('We cannot find where you are, try to be more specific.');
+        }
+      });
+    });
 	});
 
 
@@ -463,7 +352,7 @@ $.ajax({
 		this.polyOptions = {
 			strokeColor:	TWF.bookstore.getBookById(books.id).color,
 			strokeOpacity:	0.75,
-			strokeWeight:	3	
+			strokeWeight:	3
 		};
 		this.books = books;
 		this.id = books.id;
@@ -513,22 +402,24 @@ $.ajax({
 
 
 	TWF.Bootstrap = function(){
-
 		var me = this;
 
-		// Fetch points
-		$.ajax({
-			url: API_URL + '/api/all',
-			dataType: "json",
-			success: function(pointsData){
-				TWF.points = new TWF.PointsCollection(pointsData);
-				me.batchPoints();
-			},
-			error: function(){
-				alert("Can't access the points at this time. Come back later!");
-			}
-		});
+    fb.on('value', function (dataSnapshot) {
+      var points = dataSnapshot.val();
 
+      if (_.isObject(points)) {
+        var newPoints = [];
+
+        _.keys(points).forEach(function (point) {
+          newPoints.push(points[point]);
+        });
+
+        points = newPoints;
+      }
+
+      TWF.points = new TWF.PointsCollection(points);
+      me.batchPoints();
+    });
 	};
 
 	TWF.Bootstrap.prototype = {
