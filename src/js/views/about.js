@@ -1,8 +1,10 @@
+'use strict';
+
 (function () {
   var state = {aboutIsOpen: false};
   var view = document.querySelector('#about-view');
   var aboutTrigger = document.querySelector('[data-name="about-trigger"]');
-  var close = $("button#close");
+  var close = $('button#close');
 
   function attachEvents() {
     aboutTrigger.addEventListener('click', showAbout);

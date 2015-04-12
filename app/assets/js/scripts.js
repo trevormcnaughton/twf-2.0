@@ -10,6 +10,8 @@ u[o]&&(delete u[o],c?delete n[l]:typeof n.removeAttribute!==i?n.removeAttribute(
 //# sourceMappingURL=underscore-min.map
 (function(t,e){if(typeof define==="function"&&define.amd){define(["underscore","jquery","exports"],function(i,r,s){t.Backbone=e(t,s,i,r)})}else if(typeof exports!=="undefined"){var i=require("underscore");e(t,exports,i)}else{t.Backbone=e(t,{},t._,t.jQuery||t.Zepto||t.ender||t.$)}})(this,function(t,e,i,r){var s=t.Backbone;var n=[];var a=n.push;var o=n.slice;var h=n.splice;e.VERSION="1.1.2";e.$=r;e.noConflict=function(){t.Backbone=s;return this};e.emulateHTTP=false;e.emulateJSON=false;var u=e.Events={on:function(t,e,i){if(!c(this,"on",t,[e,i])||!e)return this;this._events||(this._events={});var r=this._events[t]||(this._events[t]=[]);r.push({callback:e,context:i,ctx:i||this});return this},once:function(t,e,r){if(!c(this,"once",t,[e,r])||!e)return this;var s=this;var n=i.once(function(){s.off(t,n);e.apply(this,arguments)});n._callback=e;return this.on(t,n,r)},off:function(t,e,r){var s,n,a,o,h,u,l,f;if(!this._events||!c(this,"off",t,[e,r]))return this;if(!t&&!e&&!r){this._events=void 0;return this}o=t?[t]:i.keys(this._events);for(h=0,u=o.length;h<u;h++){t=o[h];if(a=this._events[t]){this._events[t]=s=[];if(e||r){for(l=0,f=a.length;l<f;l++){n=a[l];if(e&&e!==n.callback&&e!==n.callback._callback||r&&r!==n.context){s.push(n)}}}if(!s.length)delete this._events[t]}}return this},trigger:function(t){if(!this._events)return this;var e=o.call(arguments,1);if(!c(this,"trigger",t,e))return this;var i=this._events[t];var r=this._events.all;if(i)f(i,e);if(r)f(r,arguments);return this},stopListening:function(t,e,r){var s=this._listeningTo;if(!s)return this;var n=!e&&!r;if(!r&&typeof e==="object")r=this;if(t)(s={})[t._listenId]=t;for(var a in s){t=s[a];t.off(e,r,this);if(n||i.isEmpty(t._events))delete this._listeningTo[a]}return this}};var l=/\s+/;var c=function(t,e,i,r){if(!i)return true;if(typeof i==="object"){for(var s in i){t[e].apply(t,[s,i[s]].concat(r))}return false}if(l.test(i)){var n=i.split(l);for(var a=0,o=n.length;a<o;a++){t[e].apply(t,[n[a]].concat(r))}return false}return true};var f=function(t,e){var i,r=-1,s=t.length,n=e[0],a=e[1],o=e[2];switch(e.length){case 0:while(++r<s)(i=t[r]).callback.call(i.ctx);return;case 1:while(++r<s)(i=t[r]).callback.call(i.ctx,n);return;case 2:while(++r<s)(i=t[r]).callback.call(i.ctx,n,a);return;case 3:while(++r<s)(i=t[r]).callback.call(i.ctx,n,a,o);return;default:while(++r<s)(i=t[r]).callback.apply(i.ctx,e);return}};var d={listenTo:"on",listenToOnce:"once"};i.each(d,function(t,e){u[e]=function(e,r,s){var n=this._listeningTo||(this._listeningTo={});var a=e._listenId||(e._listenId=i.uniqueId("l"));n[a]=e;if(!s&&typeof r==="object")s=this;e[t](r,s,this);return this}});u.bind=u.on;u.unbind=u.off;i.extend(e,u);var p=e.Model=function(t,e){var r=t||{};e||(e={});this.cid=i.uniqueId("c");this.attributes={};if(e.collection)this.collection=e.collection;if(e.parse)r=this.parse(r,e)||{};r=i.defaults({},r,i.result(this,"defaults"));this.set(r,e);this.changed={};this.initialize.apply(this,arguments)};i.extend(p.prototype,u,{changed:null,validationError:null,idAttribute:"id",initialize:function(){},toJSON:function(t){return i.clone(this.attributes)},sync:function(){return e.sync.apply(this,arguments)},get:function(t){return this.attributes[t]},escape:function(t){return i.escape(this.get(t))},has:function(t){return this.get(t)!=null},set:function(t,e,r){var s,n,a,o,h,u,l,c;if(t==null)return this;if(typeof t==="object"){n=t;r=e}else{(n={})[t]=e}r||(r={});if(!this._validate(n,r))return false;a=r.unset;h=r.silent;o=[];u=this._changing;this._changing=true;if(!u){this._previousAttributes=i.clone(this.attributes);this.changed={}}c=this.attributes,l=this._previousAttributes;if(this.idAttribute in n)this.id=n[this.idAttribute];for(s in n){e=n[s];if(!i.isEqual(c[s],e))o.push(s);if(!i.isEqual(l[s],e)){this.changed[s]=e}else{delete this.changed[s]}a?delete c[s]:c[s]=e}if(!h){if(o.length)this._pending=r;for(var f=0,d=o.length;f<d;f++){this.trigger("change:"+o[f],this,c[o[f]],r)}}if(u)return this;if(!h){while(this._pending){r=this._pending;this._pending=false;this.trigger("change",this,r)}}this._pending=false;this._changing=false;return this},unset:function(t,e){return this.set(t,void 0,i.extend({},e,{unset:true}))},clear:function(t){var e={};for(var r in this.attributes)e[r]=void 0;return this.set(e,i.extend({},t,{unset:true}))},hasChanged:function(t){if(t==null)return!i.isEmpty(this.changed);return i.has(this.changed,t)},changedAttributes:function(t){if(!t)return this.hasChanged()?i.clone(this.changed):false;var e,r=false;var s=this._changing?this._previousAttributes:this.attributes;for(var n in t){if(i.isEqual(s[n],e=t[n]))continue;(r||(r={}))[n]=e}return r},previous:function(t){if(t==null||!this._previousAttributes)return null;return this._previousAttributes[t]},previousAttributes:function(){return i.clone(this._previousAttributes)},fetch:function(t){t=t?i.clone(t):{};if(t.parse===void 0)t.parse=true;var e=this;var r=t.success;t.success=function(i){if(!e.set(e.parse(i,t),t))return false;if(r)r(e,i,t);e.trigger("sync",e,i,t)};q(this,t);return this.sync("read",this,t)},save:function(t,e,r){var s,n,a,o=this.attributes;if(t==null||typeof t==="object"){s=t;r=e}else{(s={})[t]=e}r=i.extend({validate:true},r);if(s&&!r.wait){if(!this.set(s,r))return false}else{if(!this._validate(s,r))return false}if(s&&r.wait){this.attributes=i.extend({},o,s)}if(r.parse===void 0)r.parse=true;var h=this;var u=r.success;r.success=function(t){h.attributes=o;var e=h.parse(t,r);if(r.wait)e=i.extend(s||{},e);if(i.isObject(e)&&!h.set(e,r)){return false}if(u)u(h,t,r);h.trigger("sync",h,t,r)};q(this,r);n=this.isNew()?"create":r.patch?"patch":"update";if(n==="patch")r.attrs=s;a=this.sync(n,this,r);if(s&&r.wait)this.attributes=o;return a},destroy:function(t){t=t?i.clone(t):{};var e=this;var r=t.success;var s=function(){e.trigger("destroy",e,e.collection,t)};t.success=function(i){if(t.wait||e.isNew())s();if(r)r(e,i,t);if(!e.isNew())e.trigger("sync",e,i,t)};if(this.isNew()){t.success();return false}q(this,t);var n=this.sync("delete",this,t);if(!t.wait)s();return n},url:function(){var t=i.result(this,"urlRoot")||i.result(this.collection,"url")||M();if(this.isNew())return t;return t.replace(/([^\/])$/,"$1/")+encodeURIComponent(this.id)},parse:function(t,e){return t},clone:function(){return new this.constructor(this.attributes)},isNew:function(){return!this.has(this.idAttribute)},isValid:function(t){return this._validate({},i.extend(t||{},{validate:true}))},_validate:function(t,e){if(!e.validate||!this.validate)return true;t=i.extend({},this.attributes,t);var r=this.validationError=this.validate(t,e)||null;if(!r)return true;this.trigger("invalid",this,r,i.extend(e,{validationError:r}));return false}});var v=["keys","values","pairs","invert","pick","omit"];i.each(v,function(t){p.prototype[t]=function(){var e=o.call(arguments);e.unshift(this.attributes);return i[t].apply(i,e)}});var g=e.Collection=function(t,e){e||(e={});if(e.model)this.model=e.model;if(e.comparator!==void 0)this.comparator=e.comparator;this._reset();this.initialize.apply(this,arguments);if(t)this.reset(t,i.extend({silent:true},e))};var m={add:true,remove:true,merge:true};var y={add:true,remove:false};i.extend(g.prototype,u,{model:p,initialize:function(){},toJSON:function(t){return this.map(function(e){return e.toJSON(t)})},sync:function(){return e.sync.apply(this,arguments)},add:function(t,e){return this.set(t,i.extend({merge:false},e,y))},remove:function(t,e){var r=!i.isArray(t);t=r?[t]:i.clone(t);e||(e={});var s,n,a,o;for(s=0,n=t.length;s<n;s++){o=t[s]=this.get(t[s]);if(!o)continue;delete this._byId[o.id];delete this._byId[o.cid];a=this.indexOf(o);this.models.splice(a,1);this.length--;if(!e.silent){e.index=a;o.trigger("remove",o,this,e)}this._removeReference(o,e)}return r?t[0]:t},set:function(t,e){e=i.defaults({},e,m);if(e.parse)t=this.parse(t,e);var r=!i.isArray(t);t=r?t?[t]:[]:i.clone(t);var s,n,a,o,h,u,l;var c=e.at;var f=this.model;var d=this.comparator&&c==null&&e.sort!==false;var v=i.isString(this.comparator)?this.comparator:null;var g=[],y=[],_={};var b=e.add,w=e.merge,x=e.remove;var E=!d&&b&&x?[]:false;for(s=0,n=t.length;s<n;s++){h=t[s]||{};if(h instanceof p){a=o=h}else{a=h[f.prototype.idAttribute||"id"]}if(u=this.get(a)){if(x)_[u.cid]=true;if(w){h=h===o?o.attributes:h;if(e.parse)h=u.parse(h,e);u.set(h,e);if(d&&!l&&u.hasChanged(v))l=true}t[s]=u}else if(b){o=t[s]=this._prepareModel(h,e);if(!o)continue;g.push(o);this._addReference(o,e)}o=u||o;if(E&&(o.isNew()||!_[o.id]))E.push(o);_[o.id]=true}if(x){for(s=0,n=this.length;s<n;++s){if(!_[(o=this.models[s]).cid])y.push(o)}if(y.length)this.remove(y,e)}if(g.length||E&&E.length){if(d)l=true;this.length+=g.length;if(c!=null){for(s=0,n=g.length;s<n;s++){this.models.splice(c+s,0,g[s])}}else{if(E)this.models.length=0;var k=E||g;for(s=0,n=k.length;s<n;s++){this.models.push(k[s])}}}if(l)this.sort({silent:true});if(!e.silent){for(s=0,n=g.length;s<n;s++){(o=g[s]).trigger("add",o,this,e)}if(l||E&&E.length)this.trigger("sort",this,e)}return r?t[0]:t},reset:function(t,e){e||(e={});for(var r=0,s=this.models.length;r<s;r++){this._removeReference(this.models[r],e)}e.previousModels=this.models;this._reset();t=this.add(t,i.extend({silent:true},e));if(!e.silent)this.trigger("reset",this,e);return t},push:function(t,e){return this.add(t,i.extend({at:this.length},e))},pop:function(t){var e=this.at(this.length-1);this.remove(e,t);return e},unshift:function(t,e){return this.add(t,i.extend({at:0},e))},shift:function(t){var e=this.at(0);this.remove(e,t);return e},slice:function(){return o.apply(this.models,arguments)},get:function(t){if(t==null)return void 0;return this._byId[t]||this._byId[t.id]||this._byId[t.cid]},at:function(t){return this.models[t]},where:function(t,e){if(i.isEmpty(t))return e?void 0:[];return this[e?"find":"filter"](function(e){for(var i in t){if(t[i]!==e.get(i))return false}return true})},findWhere:function(t){return this.where(t,true)},sort:function(t){if(!this.comparator)throw new Error("Cannot sort a set without a comparator");t||(t={});if(i.isString(this.comparator)||this.comparator.length===1){this.models=this.sortBy(this.comparator,this)}else{this.models.sort(i.bind(this.comparator,this))}if(!t.silent)this.trigger("sort",this,t);return this},pluck:function(t){return i.invoke(this.models,"get",t)},fetch:function(t){t=t?i.clone(t):{};if(t.parse===void 0)t.parse=true;var e=t.success;var r=this;t.success=function(i){var s=t.reset?"reset":"set";r[s](i,t);if(e)e(r,i,t);r.trigger("sync",r,i,t)};q(this,t);return this.sync("read",this,t)},create:function(t,e){e=e?i.clone(e):{};if(!(t=this._prepareModel(t,e)))return false;if(!e.wait)this.add(t,e);var r=this;var s=e.success;e.success=function(t,i){if(e.wait)r.add(t,e);if(s)s(t,i,e)};t.save(null,e);return t},parse:function(t,e){return t},clone:function(){return new this.constructor(this.models)},_reset:function(){this.length=0;this.models=[];this._byId={}},_prepareModel:function(t,e){if(t instanceof p)return t;e=e?i.clone(e):{};e.collection=this;var r=new this.model(t,e);if(!r.validationError)return r;this.trigger("invalid",this,r.validationError,e);return false},_addReference:function(t,e){this._byId[t.cid]=t;if(t.id!=null)this._byId[t.id]=t;if(!t.collection)t.collection=this;t.on("all",this._onModelEvent,this)},_removeReference:function(t,e){if(this===t.collection)delete t.collection;t.off("all",this._onModelEvent,this)},_onModelEvent:function(t,e,i,r){if((t==="add"||t==="remove")&&i!==this)return;if(t==="destroy")this.remove(e,r);if(e&&t==="change:"+e.idAttribute){delete this._byId[e.previous(e.idAttribute)];if(e.id!=null)this._byId[e.id]=e}this.trigger.apply(this,arguments)}});var _=["forEach","each","map","collect","reduce","foldl","inject","reduceRight","foldr","find","detect","filter","select","reject","every","all","some","any","include","contains","invoke","max","min","toArray","size","first","head","take","initial","rest","tail","drop","last","without","difference","indexOf","shuffle","lastIndexOf","isEmpty","chain","sample"];i.each(_,function(t){g.prototype[t]=function(){var e=o.call(arguments);e.unshift(this.models);return i[t].apply(i,e)}});var b=["groupBy","countBy","sortBy","indexBy"];i.each(b,function(t){g.prototype[t]=function(e,r){var s=i.isFunction(e)?e:function(t){return t.get(e)};return i[t](this.models,s,r)}});var w=e.View=function(t){this.cid=i.uniqueId("view");t||(t={});i.extend(this,i.pick(t,E));this._ensureElement();this.initialize.apply(this,arguments);this.delegateEvents()};var x=/^(\S+)\s*(.*)$/;var E=["model","collection","el","id","attributes","className","tagName","events"];i.extend(w.prototype,u,{tagName:"div",$:function(t){return this.$el.find(t)},initialize:function(){},render:function(){return this},remove:function(){this.$el.remove();this.stopListening();return this},setElement:function(t,i){if(this.$el)this.undelegateEvents();this.$el=t instanceof e.$?t:e.$(t);this.el=this.$el[0];if(i!==false)this.delegateEvents();return this},delegateEvents:function(t){if(!(t||(t=i.result(this,"events"))))return this;this.undelegateEvents();for(var e in t){var r=t[e];if(!i.isFunction(r))r=this[t[e]];if(!r)continue;var s=e.match(x);var n=s[1],a=s[2];r=i.bind(r,this);n+=".delegateEvents"+this.cid;if(a===""){this.$el.on(n,r)}else{this.$el.on(n,a,r)}}return this},undelegateEvents:function(){this.$el.off(".delegateEvents"+this.cid);return this},_ensureElement:function(){if(!this.el){var t=i.extend({},i.result(this,"attributes"));if(this.id)t.id=i.result(this,"id");if(this.className)t["class"]=i.result(this,"className");var r=e.$("<"+i.result(this,"tagName")+">").attr(t);this.setElement(r,false)}else{this.setElement(i.result(this,"el"),false)}}});e.sync=function(t,r,s){var n=T[t];i.defaults(s||(s={}),{emulateHTTP:e.emulateHTTP,emulateJSON:e.emulateJSON});var a={type:n,dataType:"json"};if(!s.url){a.url=i.result(r,"url")||M()}if(s.data==null&&r&&(t==="create"||t==="update"||t==="patch")){a.contentType="application/json";a.data=JSON.stringify(s.attrs||r.toJSON(s))}if(s.emulateJSON){a.contentType="application/x-www-form-urlencoded";a.data=a.data?{model:a.data}:{}}if(s.emulateHTTP&&(n==="PUT"||n==="DELETE"||n==="PATCH")){a.type="POST";if(s.emulateJSON)a.data._method=n;var o=s.beforeSend;s.beforeSend=function(t){t.setRequestHeader("X-HTTP-Method-Override",n);if(o)return o.apply(this,arguments)}}if(a.type!=="GET"&&!s.emulateJSON){a.processData=false}if(a.type==="PATCH"&&k){a.xhr=function(){return new ActiveXObject("Microsoft.XMLHTTP")}}var h=s.xhr=e.ajax(i.extend(a,s));r.trigger("request",r,h,s);return h};var k=typeof window!=="undefined"&&!!window.ActiveXObject&&!(window.XMLHttpRequest&&(new XMLHttpRequest).dispatchEvent);var T={create:"POST",update:"PUT",patch:"PATCH","delete":"DELETE",read:"GET"};e.ajax=function(){return e.$.ajax.apply(e.$,arguments)};var $=e.Router=function(t){t||(t={});if(t.routes)this.routes=t.routes;this._bindRoutes();this.initialize.apply(this,arguments)};var S=/\((.*?)\)/g;var H=/(\(\?)?:\w+/g;var A=/\*\w+/g;var I=/[\-{}\[\]+?.,\\\^$|#\s]/g;i.extend($.prototype,u,{initialize:function(){},route:function(t,r,s){if(!i.isRegExp(t))t=this._routeToRegExp(t);if(i.isFunction(r)){s=r;r=""}if(!s)s=this[r];var n=this;e.history.route(t,function(i){var a=n._extractParameters(t,i);n.execute(s,a);n.trigger.apply(n,["route:"+r].concat(a));n.trigger("route",r,a);e.history.trigger("route",n,r,a)});return this},execute:function(t,e){if(t)t.apply(this,e)},navigate:function(t,i){e.history.navigate(t,i);return this},_bindRoutes:function(){if(!this.routes)return;this.routes=i.result(this,"routes");var t,e=i.keys(this.routes);while((t=e.pop())!=null){this.route(t,this.routes[t])}},_routeToRegExp:function(t){t=t.replace(I,"\\$&").replace(S,"(?:$1)?").replace(H,function(t,e){return e?t:"([^/?]+)"}).replace(A,"([^?]*?)");return new RegExp("^"+t+"(?:\\?([\\s\\S]*))?$")},_extractParameters:function(t,e){var r=t.exec(e).slice(1);return i.map(r,function(t,e){if(e===r.length-1)return t||null;return t?decodeURIComponent(t):null})}});var N=e.History=function(){this.handlers=[];i.bindAll(this,"checkUrl");if(typeof window!=="undefined"){this.location=window.location;this.history=window.history}};var R=/^[#\/]|\s+$/g;var O=/^\/+|\/+$/g;var P=/msie [\w.]+/;var C=/\/$/;var j=/#.*$/;N.started=false;i.extend(N.prototype,u,{interval:50,atRoot:function(){return this.location.pathname.replace(/[^\/]$/,"$&/")===this.root},getHash:function(t){var e=(t||this).location.href.match(/#(.*)$/);return e?e[1]:""},getFragment:function(t,e){if(t==null){if(this._hasPushState||!this._wantsHashChange||e){t=decodeURI(this.location.pathname+this.location.search);var i=this.root.replace(C,"");if(!t.indexOf(i))t=t.slice(i.length)}else{t=this.getHash()}}return t.replace(R,"")},start:function(t){if(N.started)throw new Error("Backbone.history has already been started");N.started=true;this.options=i.extend({root:"/"},this.options,t);this.root=this.options.root;this._wantsHashChange=this.options.hashChange!==false;this._wantsPushState=!!this.options.pushState;this._hasPushState=!!(this.options.pushState&&this.history&&this.history.pushState);var r=this.getFragment();var s=document.documentMode;var n=P.exec(navigator.userAgent.toLowerCase())&&(!s||s<=7);this.root=("/"+this.root+"/").replace(O,"/");if(n&&this._wantsHashChange){var a=e.$('<iframe src="javascript:0" tabindex="-1">');this.iframe=a.hide().appendTo("body")[0].contentWindow;this.navigate(r)}if(this._hasPushState){e.$(window).on("popstate",this.checkUrl)}else if(this._wantsHashChange&&"onhashchange"in window&&!n){e.$(window).on("hashchange",this.checkUrl)}else if(this._wantsHashChange){this._checkUrlInterval=setInterval(this.checkUrl,this.interval)}this.fragment=r;var o=this.location;if(this._wantsHashChange&&this._wantsPushState){if(!this._hasPushState&&!this.atRoot()){this.fragment=this.getFragment(null,true);this.location.replace(this.root+"#"+this.fragment);return true}else if(this._hasPushState&&this.atRoot()&&o.hash){this.fragment=this.getHash().replace(R,"");this.history.replaceState({},document.title,this.root+this.fragment)}}if(!this.options.silent)return this.loadUrl()},stop:function(){e.$(window).off("popstate",this.checkUrl).off("hashchange",this.checkUrl);if(this._checkUrlInterval)clearInterval(this._checkUrlInterval);N.started=false},route:function(t,e){this.handlers.unshift({route:t,callback:e})},checkUrl:function(t){var e=this.getFragment();if(e===this.fragment&&this.iframe){e=this.getFragment(this.getHash(this.iframe))}if(e===this.fragment)return false;if(this.iframe)this.navigate(e);this.loadUrl()},loadUrl:function(t){t=this.fragment=this.getFragment(t);return i.any(this.handlers,function(e){if(e.route.test(t)){e.callback(t);return true}})},navigate:function(t,e){if(!N.started)return false;if(!e||e===true)e={trigger:!!e};var i=this.root+(t=this.getFragment(t||""));t=t.replace(j,"");if(this.fragment===t)return;this.fragment=t;if(t===""&&i!=="/")i=i.slice(0,-1);if(this._hasPushState){this.history[e.replace?"replaceState":"pushState"]({},document.title,i)}else if(this._wantsHashChange){this._updateHash(this.location,t,e.replace);if(this.iframe&&t!==this.getFragment(this.getHash(this.iframe))){if(!e.replace)this.iframe.document.open().close();this._updateHash(this.iframe.location,t,e.replace)}}else{return this.location.assign(i)}if(e.trigger)return this.loadUrl(t)},_updateHash:function(t,e,i){if(i){var r=t.href.replace(/(javascript:|#).*$/,"");t.replace(r+"#"+e)}else{t.hash="#"+e}}});e.history=new N;var U=function(t,e){var r=this;var s;if(t&&i.has(t,"constructor")){s=t.constructor}else{s=function(){return r.apply(this,arguments)}}i.extend(s,r,e);var n=function(){this.constructor=s};n.prototype=r.prototype;s.prototype=new n;if(t)i.extend(s.prototype,t);s.__super__=r.prototype;return s};p.extend=g.extend=$.extend=w.extend=N.extend=U;var M=function(){throw new Error('A "url" property or function must be specified')};var q=function(t,e){var i=e.error;e.error=function(r){if(i)i(t,r,e);t.trigger("error",t,r,e)}};return e});
 //# sourceMappingURL=backbone-min.map
+'use strict';
+
 (function () {
   var state = {formIsOpen: false};
   var view = document.querySelector('#add-book-view');
@@ -62,7 +64,7 @@ u[o]&&(delete u[o],c?delete n[l]:typeof n.removeAttribute!==i?n.removeAttribute(
   function handleFormSubmit(event) {
     event.preventDefault();
 
-    if (!state.formIsOpen) return;
+    if (!state.formIsOpen) { return; }
 
     var fields = extractFormValues();
 
@@ -82,11 +84,13 @@ u[o]&&(delete u[o],c?delete n[l]:typeof n.removeAttribute!==i?n.removeAttribute(
   attachEvents();
 })();
 
+'use strict';
+
 (function () {
   var state = {aboutIsOpen: false};
   var view = document.querySelector('#about-view');
   var aboutTrigger = document.querySelector('[data-name="about-trigger"]');
-  var close = $("button#close");
+  var close = $('button#close');
 
   function attachEvents() {
     aboutTrigger.addEventListener('click', showAbout);
@@ -114,52 +118,54 @@ u[o]&&(delete u[o],c?delete n[l]:typeof n.removeAttribute!==i?n.removeAttribute(
 })();
 
 var TWF = TWF || {};
-var fb = new Firebase("https://to-wake-from.firebaseio.com/books");
+var fb = new Firebase('https://to-wake-from.firebaseio.com/books');
 
 // Fake DB
 TWF.DataStore = function(){
+  'use strict';
 
-	// Defaults
-	this.defaults = {
-		color: '#FFCC00'
-	}
+  // Defaults
+  this.defaults = {
+    color: '#FFCC00'
+  };
 
-	// Books
-	this.books = [
-		{id:"twf-001", title: "book 1", color: "#70afbd"}, //light blue
-		{id:"twf-002", title: "book 2", color: "#f45425"}, //orange
-		{id:"twf-003", title: "book 3", color: "#e66169"}, //light red
-		{id:"twf-004", title: "book 4", color: "#2d5c8b"}, //need new
-		{id:"twf-005", title: "book 5", color: "#dcac3c"}, //gold
-		{id:"twf-006", title: "book 6", color: "#61b256"}, //green
-		{id:"twf-007", title: "book 7", color: "#00c6c6"}, //teal
-		{id:"twf-008", title: "book 8", color: "#45794f"}, //dark green
-		{id:"twf-009", title: "book 9", color: "#c85c97"}, //pink
-		{id:"twf-010", title: "book 10", color:"#666666"}, //grey
-	];
+  // Books
+  this.books = [
+    {id:'twf-001', title: 'book 1', color: '#70afbd'}, //light blue
+    {id:'twf-002', title: 'book 2', color: '#f45425'}, //orange
+    {id:'twf-003', title: 'book 3', color: '#e66169'}, //light red
+    {id:'twf-004', title: 'book 4', color: '#2d5c8b'}, //need new
+    {id:'twf-005', title: 'book 5', color: '#dcac3c'}, //gold
+    {id:'twf-006', title: 'book 6', color: '#61b256'}, //green
+    {id:'twf-007', title: 'book 7', color: '#00c6c6'}, //teal
+    {id:'twf-008', title: 'book 8', color: '#45794f'}, //dark green
+    {id:'twf-009', title: 'book 9', color: '#c85c97'}, //pink
+    {id:'twf-010', title: 'book 10', color:'#666666'}, //grey
+  ];
 
-	// User/Tracker Data
-	this.tracker = {
-		currentBook: null,
-		enteredLocation: null,
-		geocode: null
-	}
+  // User/Tracker Data
+  this.tracker = {
+    currentBook: null,
+    enteredLocation: null,
+    geocode: null
+  };
 
-	// Utility methods
-	this.getBookById = function(id){
-		var bs = this.books;
-		var len = bs.length;
+  // Utility methods
+  this.getBookById = function(id){
+    var i;
+    var bs = this.books;
+    var len = bs.length;
 
-		for(i = 0; i < len; i++){
-			if(bs[i].id === id) return bs[i];
-		}
+    for(i = 0; i < len; i++){
+      if(bs[i].id === id) { return bs[i]; }
+    }
 
-		return null;
-	}
+    return null;
+  };
 
-	this.getCurrentColor = function(){
-		return this.tracker.currentBook ? this.tracker.currentBook.color : this.defaults.color;
-	}
+  this.getCurrentColor = function(){
+    return this.tracker.currentBook ? this.tracker.currentBook.color : this.defaults.color;
+  };
 };
 
 TWF.bookstore = new TWF.DataStore();
@@ -167,8 +173,7 @@ TWF.bookstore = new TWF.DataStore();
 ;(function ($, window, undefined) {
   'use strict';
 
-  var $doc = $(document),
-      Modernizr = window.Modernizr;
+  var Modernizr = window.Modernizr;
 
   // Hide address bar on mobile devices
   if (Modernizr.touch) {
@@ -179,237 +184,232 @@ TWF.bookstore = new TWF.DataStore();
     });
   }
 
-	//get these maps poppin'
-	var poly;
-	var tmppoly;
-	var map;
-	var location;
-	var initialLocation;
-	var geodesic;
-	var geocoder 			= new google.maps.Geocoder();
-	var submitLoc 			= $('#set-location');
-	var submitGeoLoc		= $('.geo-location');
-	var chicago 			= new google.maps.LatLng(41.852, -87.681);
-	var browserSupportFlag 	= new Boolean();
-	var error				= new Boolean();
+  //get these maps poppin'
+  var poly;
+  var map;
+  var location;
+  var initialLocation;
+  var browserSupportFlag;
+  var geocoder 			= new google.maps.Geocoder();
+  var chicago 			= new google.maps.LatLng(41.852, -87.681);
 
-	var totalDistance = 0;
+  var totalDistance = 0;
 
-	// Kind of a model
-	var tracker = {
-		init: function(){
-			//Map Options
+  // Kind of a model
+  var tracker = {
+    init: function(){
+      //Map Options
 
-			//Give this map some style
-			var styles = [
-				{
-					stylers: [
-						{ saturation: -100 }
-					]
-				},{
-					featureType: "road",
-					elementType: "geometry",
-					stylers: [
-						{ lightness: 150 },
-						{ visibility: "simplified" }
-					]
-				},{
-					featureType: "road",
-					elementType: "labels",
-					stylers: [
-						{ visibility: "off" }
-					]
-				}
-			];
+      //Give this map some style
+      var styles = [
+        {
+        stylers: [
+          { saturation: -100 }
+        ]
+      },{
+        featureType: 'road',
+        elementType: 'geometry',
+        stylers: [
+          { lightness: 150 },
+          { visibility: 'simplified' }
+        ]
+      },{
+        featureType: 'road',
+        elementType: 'labels',
+        stylers: [
+          { visibility: 'off' }
+        ]
+      }
+      ];
 
-			//initiate styled map and giver 'er a name
-			var styledMap = new google.maps.StyledMapType(styles, {name: "Styled Map"});
+      //initiate styled map and giver 'er a name
+      var styledMap = new google.maps.StyledMapType(styles, {name: 'Styled Map'});
 
-			var mapOpt 	=	{
-				zoom:	12,
-				center:	chicago,
-				//mapTypeId: google.maps.MapTypeId.ROADMAP,
-				disableDefaultUI: true,
-				zoomControl: true,
-			    zoomControlOptions: {
-			        style: google.maps.ZoomControlStyle.LARGE,
-			        position: google.maps.ControlPosition.LEFT_CENTER
-			    },
-				mapTypeControlOptions: {
-					mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
-				}
-			};
+      var mapOpt 	=	{
+        zoom:	12,
+        center:	chicago,
+        //mapTypeId: google.maps.MapTypeId.ROADMAP,
+        disableDefaultUI: true,
+        zoomControl: true,
+        zoomControlOptions: {
+          style: google.maps.ZoomControlStyle.LARGE,
+          position: google.maps.ControlPosition.LEFT_CENTER
+        },
+        mapTypeControlOptions: {
+          mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
+        }
+      };
 
-			map = new google.maps.Map(document.getElementById("maps-canvas"), mapOpt);
-			map.mapTypes.set('map_style', styledMap);
-			map.setMapTypeId('map_style');
+      map = new google.maps.Map(document.getElementById('maps-canvas'), mapOpt);
+      map.mapTypes.set('map_style', styledMap);
+      map.setMapTypeId('map_style');
 
 
-			var polyOptions = {
-				strokeColor:	TWF.bookstore.getCurrentColor(),
-				strokeOpacity:	0.75,
-				strokeWeight:	3
-			}
+      var polyOptions = {
+        strokeColor:	TWF.bookstore.getCurrentColor(),
+        strokeOpacity:	0.75,
+        strokeWeight:	3
+      };
 
-			//setup polyline
-			poly = new google.maps.Polyline(polyOptions, {geodesic: true});
-			poly.setMap(map);
+      //setup polyline
+      poly = new google.maps.Polyline(polyOptions, {geodesic: true});
+      poly.setMap(map);
 
-			TWF.bootstrap = new TWF.Bootstrap();
-		},
-		setLocationAndDraw: function(){
+      TWF.bootstrap = new TWF.Bootstrap();
+    },
+    setLocationAndDraw: function(){
 
-			var color = TWF.bookstore.tracker.currentBook.color;
+      var color = TWF.bookstore.tracker.currentBook.color;
 
-			// Update line color
-			poly.setOptions({strokeColor:color});
+      // Update line color
+      poly.setOptions({strokeColor:color});
 
 
-			var path 		= poly.getPath();
-			var pathPoints	= (path.length) + 1;
-			location 		= TWF.bookstore.tracker.enteredLocation;//$('#location').val();
+      var path 		= poly.getPath();
+      var pathPoints	= (path.length) + 1;
+      location 		= TWF.bookstore.tracker.enteredLocation;//$('#location').val();
 
-			var customBookMarker = new TWF.BookMarker({fillColor:color,strokeColor:color});
-			//Call the geocode method
-			geocoder.geocode({'address': location}, function(results, status){
+      var customBookMarker = new TWF.BookMarker({fillColor:color,strokeColor:color});
+      //Call the geocode method
+      geocoder.geocode({'address': location}, function(results, status){
 
-				if (status == google.maps.GeocoderStatus.OK){
-					path.push(results[0].geometry.location);
-					getDistance();
-					map.setCenter(results[0].geometry.location); //if geocode status is OK set centerpoint to the variables location
+        if (status == google.maps.GeocoderStatus.OK) {
+          path.push(results[0].geometry.location);
+          getDistance();
+          map.setCenter(results[0].geometry.location); //if geocode status is OK set centerpoint to the variables location
 
-					//after center, sets marker at location
-					var marker = new google.maps.Marker({
+          //after center, sets marker at location
+          var marker = new google.maps.Marker({
 
-						map:map,
-						position: results[0].geometry.location,
-						animation: google.maps.Animation.DROP,
-						icon: customBookMarker.ui,
-						zoom: 16
+            map:map,
+            position: results[0].geometry.location,
+            animation: google.maps.Animation.DROP,
+            icon: customBookMarker.ui,
+            zoom: 16
 
-					});
+          });
 
-					google.maps.event.addListener(marker, 'click', function(){
-						TWF.infoWindow.infowindow.open(map,marker);
-					})
+          google.maps.event.addListener(marker, 'click', function(){
+            TWF.infoWindow.infowindow.open(map,marker);
+          });
 
-/* 					submitLoc.trigger('reveal:close'); */
+          /* 					submitLoc.trigger('reveal:close'); */
 
-				//throw an error into the HTML
-				}else{
-					$('.geocode-error-message').html('We cannot find where you are, try to be more specific.').addClass('show-error');
-				}
-			});
-			//Clears inputs
-			setTimeout(function(){
-				$('#book-id, #location').val('');
-			},280 );
+          //throw an error into the HTML
+        }else{
+          $('.geocode-error-message').html('We cannot find where you are, try to be more specific.').addClass('show-error');
+        }
+      });
+      //Clears inputs
+      setTimeout(function(){
+        $('#book-id, #location').val('');
+      },280 );
 
-			$('.total-points').html(pathPoints);
+      $('.total-points').html(pathPoints);
 
-		},
+    },
 
-		setGeolocation: function(){
+    setGeolocation: function(){
+      function handleNoGeolocation(errorFlag) {
+        if (errorFlag === true) {
+          $('.geocode-error-message').html('Oh no! Geolocation service has failed. Try typing in your location.').addClass('show-error');
+        } else {
+          $('.geocode-error-message').html('Your browser doesn\'t support geolocation').addClass('show-error');
+        }
+        map.setCenter(initialLocation);
+      }
 
-			//Check for Geolocation then use W3C Geolocation (preffered)
-			if(navigator.geolocation) {
-				browserSupportFlag = true;
+      //Check for Geolocation then use W3C Geolocation (preffered)
+      if(navigator.geolocation) {
+        browserSupportFlag = true;
 
-				navigator.geolocation.getCurrentPosition(function(position) {
-					initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
-					map.setCenter(initialLocation);
+        navigator.geolocation.getCurrentPosition(function(position) {
+          initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+          map.setCenter(initialLocation);
 
-					var marker = new google.maps.Marker({
-						position:	initialLocation,
-						map:		map
-					});
+          new google.maps.Marker({
+            position:	initialLocation,
+            map: map
+          });
 
-				}, function() {
-				  handleNoGeolocation(browserSupportFlag);
-				});
-			} else {
-				browserSupportFlag = false;
-				handleNoGeolocation(browserSupportFlag)
-			}
+        }, function() {
+          handleNoGeolocation(browserSupportFlag);
+        });
+      } else {
+        browserSupportFlag = false;
+        handleNoGeolocation(browserSupportFlag);
+      }
 
-			function handleNoGeolocation(errorFlag) {
-			    if (errorFlag == true) {
-			      $('.geocode-error-message').html('Oh no! Geolocation service has failed. Try typing in your location.').addClass('show-error');
-			    } else {
-			      $('.geocode-error-message').html("Your browser doesn't support geolocation").addClass('show-error');
-			    }
-			    map.setCenter(initialLocation);
-			  }
 
-			  map.setZoom(16)
-			  $(this).trigger('reveal:close');
+      map.setZoom(16);
+      $(this).trigger('reveal:close');
 
-		}
+    }
 
-	}; //end tracker
+  }; //end tracker
 
 
 
 
 
-	//Calculate Distance
-	function getDistance(){
-		var path = poly.getPath();
-		var len = path.length;
-		var newPoint;
-		var lastPoint;
+  //Calculate Distance
+  function getDistance(){
+    var path = poly.getPath();
+    var len = path.length;
+    var newPoint;
+    var lastPoint;
 
-		if( len > 1 ){
-			newPoint = path.getAt(len-1);
-			lastPoint = path.getAt(len-2);
-			updateDistance(google.maps.geometry.spherical.computeDistanceBetween(newPoint,lastPoint));
-		}
-	}
-
-
-
-
-
-	//Update total distance
-	function updateDistance(dist){
-		dist = Math.round(dist*0.00062);
-		totalDistance += dist;
-
-		$('.last-dist').html(dist + ' mi');
-		$('.total-dist').html(totalDistance + ' mi');
-
-	}
+    if( len > 1 ){
+      newPoint = path.getAt(len-1);
+      lastPoint = path.getAt(len-2);
+      updateDistance(google.maps.geometry.spherical.computeDistanceBetween(newPoint,lastPoint));
+    }
+  }
 
 
 
 
-	// Book Marker Objects
-	TWF.BookMarker = function(opts){
-		this.config = {
-			path: google.maps.SymbolPath.CIRCLE,
-			fillColor: '#36abc4',
-			fillOpacity: 1,
-			scale: 8,
-			strokeColor: '#36abc4',
-			strokeWeight: 8,
-			strokeOpacity:0.3
-		}
 
-		$.extend(this.config,opts);
+  //Update total distance
+  function updateDistance(dist){
+    dist = Math.round(dist*0.00062);
+    totalDistance += dist;
 
-		this.ui = this.config;
-	};
+    $('.last-dist').html(dist + ' mi');
+    $('.total-dist').html(totalDistance + ' mi');
+
+  }
 
 
 
-	// Load tracker
-	$(window).load(function(){
-		tracker.init();
+
+  // Book Marker Objects
+  TWF.BookMarker = function(opts){
+    this.config = {
+      path: google.maps.SymbolPath.CIRCLE,
+      fillColor: '#36abc4',
+      fillOpacity: 1,
+      scale: 8,
+      strokeColor: '#36abc4',
+      strokeWeight: 8,
+      strokeOpacity: 0.3
+    };
+
+    $.extend(this.config,opts);
+
+    this.ui = this.config;
+  };
+
+
+
+  // Load tracker
+  $(window).load(function(){
+    tracker.init();
 
     Backbone.on('book:add', function (rawData) {
       var bookId = rawData.bookId;
 
-      TWF.bookstore.tracker.currentBook = TWF.bookstore.getBookById(bookId)
+      TWF.bookstore.tracker.currentBook = TWF.bookstore.getBookById(bookId);
       TWF.bookstore.tracker.currentBook.id = bookId;
       TWF.bookstore.tracker.enteredLocation = rawData.address;
 
@@ -419,7 +419,7 @@ TWF.bookstore = new TWF.DataStore();
 
           fb.push({
             id: _.uniqueId() + new Date().getTime(),
-            book_id: TWF.bookstore.tracker.currentBook.id,
+            'book_id': TWF.bookstore.tracker.currentBook.id,
             lat: results[0].geometry.location.k,
             lon: results[0].geometry.location.D,
             date: new Date().getTime()
@@ -434,74 +434,73 @@ TWF.bookstore = new TWF.DataStore();
         }
       });
     });
-	});
+  });
 
 
 
 
-	TWF.PointModel = Backbone.Model.extend({
-		defaults:{
-			"book_id":"twf-001",
-			"lat" : "0",
-			"lon" : "0",
-			"time" : new Date()
-		}
-	});
+  TWF.PointModel = Backbone.Model.extend({
+    defaults:{
+      'book_id':'twf-001',
+      'lat' : '0',
+      'lon' : '0',
+      'time' : new Date()
+    }
+  });
 
-	TWF.PointsCollection = Backbone.Collection.extend({
-		model: TWF.PointModel
-	});
+  TWF.PointsCollection = Backbone.Collection.extend({
+    model: TWF.PointModel
+  });
 
-	// Mock Collection
-	TWF.PathsCollection = function(){
-		this.paths = [];
-	};
+  // Mock Collection
+  TWF.PathsCollection = function(){
+    this.paths = [];
+  };
 
-	TWF.PathsCollection.prototype = {
-		getById: function(id){
-			var i = 0;
-			var len = this.paths.length;
-			for(i; i<len; i++){
-				if(this.paths[i].id === id){ return this.paths[i]; }
-			}
-		}
-	}
+  TWF.PathsCollection.prototype = {
+    getById: function(id){
+      var i = 0;
+      var len = this.paths.length;
+      for(i; i<len; i++){
+        if(this.paths[i].id === id){ return this.paths[i]; }
+      }
+    }
+  };
 
-	TWF.PathGroup = function(books){
-		this.polyOptions = {
-			strokeColor:	TWF.bookstore.getBookById(books.id).color,
-			strokeOpacity:	0.75,
-			strokeWeight:	3
-		};
-		this.books = books;
-		this.id = books.id;
-		this.poly = new google.maps.Polyline(this.polyOptions, {geodesic: true});
-		this.poly.setMap(map);
-		var color = this.polyOptions.strokeColor;
-		this.color = color;
-		var i = 0;
-		var len = books.collection.length;
-		var pts = [];
+  TWF.PathGroup = function(books){
+    this.polyOptions = {
+      strokeColor:	TWF.bookstore.getBookById(books.id).color,
+      strokeOpacity:	0.75,
+      strokeWeight:	3
+    };
+    this.books = books;
+    this.id = books.id;
+    this.poly = new google.maps.Polyline(this.polyOptions, {geodesic: true});
+    this.poly.setMap(map);
+    var color = this.polyOptions.strokeColor;
+    this.color = color;
+    var i = 0;
+    var len = books.collection.length;
 
-		for(i; i<len; i++){
-			var path = this.poly.getPath();
-			this.poly.setOptions({strokeColor:color});
-			var point = new google.maps.LatLng(books.collection[i].get("lat"), books.collection[i].get("lon"));
-			path.push(point);
-			var marker = new google.maps.Marker({
-					map:map,
-					position: point,
-					//animation: google.maps.Animation.DROP,
-					icon: new TWF.BookMarker({fillColor:color, strokeColor:color}).ui,
-					zoom: 16
-			});
+    for(i; i<len; i++){
+      var path = this.poly.getPath();
+      this.poly.setOptions({strokeColor:color});
+      var point = new google.maps.LatLng(books.collection[i].get('lat'), books.collection[i].get('lon'));
+      path.push(point);
 
+      new google.maps.Marker({
+        map:map,
+        position: point,
+        //animation: google.maps.Animation.DROP,
+        icon: new TWF.BookMarker({fillColor:color, strokeColor:color}).ui,
+        zoom: 16
+      });
 
-		}
-	};
+    }
+  };
 
-	TWF.Bootstrap = function(){
-		var me = this;
+  TWF.Bootstrap = function(){
+    var me = this;
 
     fb.on('value', function (dataSnapshot) {
       var points = dataSnapshot.val();
@@ -519,72 +518,72 @@ TWF.bookstore = new TWF.DataStore();
       TWF.points = new TWF.PointsCollection(points);
       me.batchPoints();
     });
-	};
+  };
 
-	TWF.Bootstrap.prototype = {
-		batchPoints: function(){
+  TWF.Bootstrap.prototype = {
+    batchPoints: function(){
 
-			var coll = TWF.points;
+      var coll = TWF.points;
 
-			TWF.books = [
-				{collection:[]},
-				{collection:[]},
-				{collection:[]},
-				{collection:[]},
-				{collection:[]},
-				{collection:[]},
-				{collection:[]},
-				{collection:[]},
-				{collection:[]},
-				{collection:[]}
-			];
+      TWF.books = [
+        {collection:[]},
+        {collection:[]},
+        {collection:[]},
+        {collection:[]},
+        {collection:[]},
+        {collection:[]},
+        {collection:[]},
+        {collection:[]},
+        {collection:[]},
+        {collection:[]}
+      ];
 
 
-			_.each(coll.models, function(model,idx){
-				var bid = model.get("book_id");
+      _.each(coll.models, function(model){
+        var bid = model.get('book_id');
 
-				if( bid === "twf-001" ){
-					TWF.books[0].id = bid;
-					TWF.books[0].collection.push(model);
-				}else if( bid === "twf-002" ){
-					TWF.books[1].id = bid;
-					TWF.books[1].collection.push(model);
-				}else if( bid === "twf-003" ){
-					TWF.books[2].id = bid;
-					TWF.books[2].collection.push(model);
-				}else if( bid === "twf-004" ){
-					TWF.books[3].id = bid;
-					TWF.books[3].collection.push(model);
-				}else if( bid === "twf-005" ){
-					TWF.books[4].id = bid;
-					TWF.books[4].collection.push(model);
-				}else if( bid === "twf-006" ){
-					TWF.books[5].id = bid;
-					TWF.books[5].collection.push(model);
-				}else if( bid === "twf-007" ){
-					TWF.books[6].id = bid;
-					TWF.books[6].collection.push(model);
-				}else if( bid === "twf-008" ){
-					TWF.books[7].id = bid;
-					TWF.books[7].collection.push(model);
-				}else if( bid === "twf-009" ){
-					TWF.books[8].id = bid;
-					TWF.books[8].collection.push(model);
-				}else if( bid === "twf-010" ){
-					TWF.books[9].id = bid;
-					TWF.books[9].collection.push(model);
-				}
-			});
+        if( bid === 'twf-001' ){
+          TWF.books[0].id = bid;
+          TWF.books[0].collection.push(model);
+        }else if( bid === 'twf-002' ){
+          TWF.books[1].id = bid;
+          TWF.books[1].collection.push(model);
+        }else if( bid === 'twf-003' ){
+          TWF.books[2].id = bid;
+          TWF.books[2].collection.push(model);
+        }else if( bid === 'twf-004' ){
+          TWF.books[3].id = bid;
+          TWF.books[3].collection.push(model);
+        }else if( bid === 'twf-005' ){
+          TWF.books[4].id = bid;
+          TWF.books[4].collection.push(model);
+        }else if( bid === 'twf-006' ){
+          TWF.books[5].id = bid;
+          TWF.books[5].collection.push(model);
+        }else if( bid === 'twf-007' ){
+          TWF.books[6].id = bid;
+          TWF.books[6].collection.push(model);
+        }else if( bid === 'twf-008' ){
+          TWF.books[7].id = bid;
+          TWF.books[7].collection.push(model);
+        }else if( bid === 'twf-009' ){
+          TWF.books[8].id = bid;
+          TWF.books[8].collection.push(model);
+        }else if( bid === 'twf-010' ){
+          TWF.books[9].id = bid;
+          TWF.books[9].collection.push(model);
+        }
+      });
 
-			TWF.Paths = new TWF.PathsCollection();
+      TWF.Paths = new TWF.PathsCollection();
 
-			for(var i = 0; i<10; i++){
-				TWF.Paths.paths.push({
-					group: new TWF.PathGroup({collection:TWF.books[i].collection,id:TWF.books[i].id}),
-					id: TWF.books[i].id
-				});
-			}
+      for(var i = 0; i<10; i++){
+        TWF.Paths.paths.push({
+          group: new TWF.PathGroup({collection:TWF.books[i].collection,id:TWF.books[i].id}),
+          id: TWF.books[i].id
+        });
+      }
 
-		}
-	}
+    }
+  };
 })(jQuery, this);

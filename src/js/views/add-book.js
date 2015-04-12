@@ -1,3 +1,5 @@
+'use strict';
+
 (function () {
   var state = {formIsOpen: false};
   var view = document.querySelector('#add-book-view');
@@ -50,7 +52,7 @@
   function handleFormSubmit(event) {
     event.preventDefault();
 
-    if (!state.formIsOpen) return;
+    if (!state.formIsOpen) { return; }
 
     var fields = extractFormValues();
 

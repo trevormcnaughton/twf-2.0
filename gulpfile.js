@@ -34,7 +34,15 @@ gulp.task('css', function () {
     // .pipe(browserSync.reload({stream:true}));
 });
 
-gulp.task('js',function(){
+gulp.task('lint', function () {
+  return gulp.src([
+    'src/js/**/*.js',
+    '!src/js/vendor/**/*.js'
+  ]).pipe(jshint('.jshintrc'))
+  .pipe(jshint.reporter('default'));
+});
+
+gulp.task('js', ['lint'], function(){
   var files = [
     'src/js/vendor/jquery.min.js',
     'src/js/vendor/underscore.js',
@@ -44,8 +52,6 @@ gulp.task('js',function(){
     'src/js/scripts.js'
   ];
   gulp.src(files)
-    // .pipe(jshint('.jshintrc'))
-    .pipe(jshint.reporter('default'))
     // .pipe(header(banner, { package : package }))
     .pipe(concat('scripts.js'))
     .pipe(gulp.dest('app/assets/js'))

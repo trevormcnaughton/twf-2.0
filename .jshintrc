@@ -1,7 +1,6 @@
 {
   "node": true,
   "browser": true,
-  "es5": true,
   "esnext": true,
   "bitwise": true,
   "camelcase": true,
@@ -20,7 +19,12 @@
   "trailing": false,
   "smarttabs": true,
   "globals" : {
+    "Backbone": true,
+    "_": true,
+    "$": true,
     "jQuery": true,
-    "Modernizr": true
+    "google": true,
+    "Modernizr": true,
+    "Firebase": true
   }
 }
